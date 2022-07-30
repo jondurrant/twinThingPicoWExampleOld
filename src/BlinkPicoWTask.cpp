@@ -85,10 +85,10 @@ bool BlinkPicoWTask::start(UBaseType_t priority){
 	for( ;; )
 	{
 		cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-		printf("On\n");
+		//printf("On\n");
 		vTaskDelay(BLINK_TIME);
 		cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-		printf("Off\n");
+		//printf("Off\n");
 		vTaskDelay(BLINK_TIME);
 	}
 
