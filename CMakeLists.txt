@@ -25,8 +25,19 @@ pico_sdk_init()
 #include(../pimoroni-pico/libraries/pico_explorer/pico_explorer.cmake)
 # include(../pimoroni-pico/libraries/pico_display/pico_display.cmake)
 
+set(TWIN_THING_PICO_CONFIG_PATH ${CMAKE_CURRENT_LIST_DIR}/config)
+set(COREMQTT_PORT_PATH      ${CMAKE_CURRENT_LIST_DIR}/port/CoreMQTT)
+set(COREMQTT_AGENT_PORT_PATH      ${CMAKE_CURRENT_LIST_DIR}/port/CoreMQTT-Agent)
+
+
 include(FreeRTOS_Kernel_import.cmake)
 include(lwip_import.cmake)
+
+include("lib/json-maker.cmake")
+include("lib/tiny-json.cmake")
+include("lib/twinThingPicoW/twinThingPicoW.cmake")
+include("lib/FreeRTOS-coreMQTT.cmake")
+include("lib/FreeRTOS-coreMQTT-Agent.cmake")
 
 
 # Don't forget to link the libraries you need!

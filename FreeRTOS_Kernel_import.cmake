@@ -71,3 +71,6 @@ target_include_directories(FREERTOS_PORT
     INTERFACE
        ${CMAKE_CURRENT_LIST_DIR}/port/FreeRTOS-Kernel
     )
+target_sources(FREERTOS_PORT INTERFACE
+    ${CMAKE_CURRENT_LIST_DIR}/port/FreeRTOS-Kernel/IdleMemory.c
+)

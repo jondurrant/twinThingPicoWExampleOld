@@ -4,6 +4,7 @@
 
 #include "pico/cyw43_arch.h"
 #include "pico/stdlib.h"
+#include <stdio.h>
 
 #include "lwip/ip4_addr.h"
 #include "lwip/sockets.h"
@@ -15,11 +16,23 @@
 #include <stdio.h>
 #include "BlinkPicoWTask.h"
 
+#include "MQTTAgent.h"
+#include "MQTTRouterPing.h"
+#include "MQTTRouterTwin.h"
+#include <WifiHelper.h>
+#include "StateExample.h"
+#include "ExampleAgentObserver.h"
+
 
 
 #define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
 
-
+#ifndef MQTTHOST
+#define MQTTHOST "piudev2.local.jondurrant.com"
+#define MQTTPORT 1883
+#define MQTTUSER "MAC"
+#define MQTTPASSWD "MAC"
+#endif
 
 
 void main_task(void *params){
@@ -56,8 +69,53 @@ void main_task(void *params){
 	BlinkPicoWTask blink;
 	blink.start(TEST_TASK_PRIORITY+1);
 
+
+	char mqttTarget[] = MQTTHOST;
+	int mqttPort = MQTTPORT;
+	char mqttUser[] = MQTTUSER;
+	char mqttPwd[] = MQTTPASSWD;
+	MQTTRouterTwin mqttRouter;
+	StateExample state;
+	ExampleAgentObserver agentObs;
+
+	MQTTAgent mqttAgent;
+	TwinTask xTwin;
+	MQTTPingTask xPing;
+
+	mqttAgent.credentials(mqttUser, mqttPwd);
+	mqttRouter.init(mqttAgent.getId(), &mqttAgent);
+
+	printf("Connecting to: %s(%d) as %s:%s:%s\n",
+			mqttTarget, mqttPort, mqttAgent.getId(),
+			mqttUser, mqttPwd
+			);
+
+	//Twin agent to manage the state
+	xTwin.setStateObject(&state);
+	xTwin.setMQTTInterface(&mqttAgent);
+	xTwin.start(tskIDLE_PRIORITY+1);
+
+	//Start up a Ping agent to mange ping requests
+	xPing.setInterface(&mqttAgent);
+	xPing.start(tskIDLE_PRIORITY+1);
+
+	//Give the router the twin and ping agents
+	mqttRouter.setTwin(&xTwin);
+	mqttRouter.setPingTask(&xPing);
+
+	//Setup and start the mqttAgent
+	mqttAgent.setObserver(&agentObs);
+	mqttAgent.setRouter(&mqttRouter);
+	mqttAgent.mqttConnect(mqttTarget, mqttPort, true, false);
+	mqttAgent.start(tskIDLE_PRIORITY+1);
+
+
+
     while(true) {
-        vTaskDelay(100);
+        vTaskDelay(1000);
+        if (cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA) < 0){
+        	printf("AP Link is down\n");
+        }
     }
 
     cyw43_arch_deinit();
@@ -69,7 +127,10 @@ void main_task(void *params){
 
 void vLaunch( void) {
     TaskHandle_t task;
-    xTaskCreate(main_task, "TestMainThread", configMINIMAL_STACK_SIZE, NULL, TEST_TASK_PRIORITY, &task);
+    //xTaskCreate(main_task, "TestMainThread", configMINIMAL_STACK_SIZE, NULL, TEST_TASK_PRIORITY, &task);
+
+    xTaskCreate(main_task, "TestMainThread", 2048, NULL, TEST_TASK_PRIORITY, &task);
+
 
 #if NO_SYS && configUSE_CORE_AFFINITY && configNUM_CORES > 1
     // we must bind the main task to one core (well at least while the init is called)
