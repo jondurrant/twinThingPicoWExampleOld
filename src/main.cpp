@@ -14,7 +14,7 @@
 #include "task.h"
 #include "queue.h"
 #include <stdio.h>
-#include "BlinkPicoWTask.h"
+
 
 #include "MQTTAgent.h"
 #include "MQTTRouterPing.h"
@@ -22,6 +22,8 @@
 #include <WifiHelper.h>
 #include "StateExample.h"
 #include "ExampleAgentObserver.h"
+
+#include "RGBLEDAgent.h"
 
 
 
@@ -38,6 +40,8 @@
 void main_task(void *params){
 
 	printf("Main task started\n");
+	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
+
 
 	int res = cyw43_arch_init();
 	printf("cyw42 init %d\n", res);
@@ -59,15 +63,29 @@ void main_task(void *params){
 		printf("Connect r %d\n", r);
 	   // if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 60000)) {
 		if (r){
-			printf("failed to connect.\n");
+			printf("Failed to join AP.\n");
 			 vTaskDelay(2000);
 		}
 	}
 
+	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
 
 
-	BlinkPicoWTask blink;
-	blink.start(TEST_TASK_PRIORITY+1);
+
+
+	RGBLEDAgent rgbLED(2,3,4);
+	if (!rgbLED.start(TEST_TASK_PRIORITY+2)){
+		printf("Failed to start RGB LED Agent\n");
+	}
+	printf("RGB HW:%d\n", rgbLED.getStakHighWater());
+
+	rgbLED.set(RGBModeOn, 0xFF, 0xFF, 0xFF);
+
+
+
+	char ipStr[20];
+	WifiHelper::getIPAddressStr(ipStr);
+	printf("IP ADDRESS: %s\n", ipStr);
 
 
 	char mqttTarget[] = MQTTHOST;
@@ -111,11 +129,82 @@ void main_task(void *params){
 
 
 
+	uint8_t i=0;
     while(true) {
+    	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
+    	printf("RGB HW:%d\n", rgbLED.getStakHighWater());
         vTaskDelay(1000);
+
         if (cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA) < 0){
         	printf("AP Link is down\n");
+        	while (r < 0){
+				r = cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 60000);
+				printf("Connect r %d\n", r);
+			   // if (cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 60000)) {
+				if (r){
+					printf("Failed to join AP.\n");
+					 vTaskDelay(2000);
+				}
+			}
         }
+
+        i++;
+        switch(i){
+        	case 1: {
+				rgbLED.set(RGBModeOn, 0xFF, 0x00, 0x00);
+				printf("Red\n");
+				break;
+        	}
+        	case 2: {
+				rgbLED.set(RGBModeOn, 0x00, 0xFF, 0x00);
+				printf("Green\n");
+				break;
+			}
+        	case 3: {
+				rgbLED.set(RGBModeOn, 0x00, 0x00, 0xFF);
+				printf("Blue\n");
+				break;
+			}
+        	case 4: {
+				rgbLED.set(RGBModeFast, 0xFF, 0x00, 0x00);
+				printf("Red\n");
+				break;
+        	}
+        	case 5: {
+				rgbLED.set(RGBModeFast, 0x00, 0xFF, 0x00);
+				printf("Green\n");
+				break;
+			}
+        	case 6: {
+				rgbLED.set(RGBModeFast, 0x00, 0x00, 0xFF);
+				printf("Blue\n");
+				break;
+			}
+        	case 7: {
+        		rgbLED.set(RGBModeOn, 0xFF, 0xFF, 0xFF);
+        		printf("White\n");
+        		break;
+        	}
+        	case 8: {
+				rgbLED.set(RGBModeOnce, 0xFF, 0x00, 0x00);
+				printf("Red\n");
+				break;
+			}
+			case 9: {
+				rgbLED.set(RGBModeOnce, 0x00, 0xFF, 0x00);
+				printf("Green\n");
+				break;
+			}
+			case 10: {
+				rgbLED.set(RGBModeOnce, 0x00, 0x00, 0xFF);
+				printf("Blue\n");
+				break;
+			}
+        	default: {
+        		i=0;
+        	}
+        }
+
     }
 
     cyw43_arch_deinit();

@@ -1,6 +1,9 @@
 /*
  * BlinkPicoWTask.h
  *
+ * Task to blink the Pico W onboard LED
+ * Do not use with any other CY43 processes as not mutual protected
+ *
  *  Created on: 30 Jul 2022
  *      Author: jondurrant
  */

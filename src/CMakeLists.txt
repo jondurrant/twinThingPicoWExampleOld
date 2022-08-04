@@ -1,6 +1,7 @@
 add_executable(${NAME}
         main.cpp
-        BlinkPicoWTask.cpp
+        RGBLEDAgent.cpp
+        RGBpwm.cpp
         ExampleAgentObserver.cpp
         StateExample.cpp
         )
@@ -17,6 +18,7 @@ target_link_libraries(${NAME}
 	 json_maker 
 	 tiny_json
 	 hardware_rtc
+	 hardware_pwm
 	 coreMQTT 
 	 coreMQTTAgent
 	)
