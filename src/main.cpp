@@ -21,13 +21,13 @@
 #include "MQTTRouterTwin.h"
 #include <WifiHelper.h>
 #include "StateExample.h"
-#include "ExampleAgentObserver.h"
+#include "ConnectionObserver.h"
 
 #include "RGBLEDAgent.h"
 
 
 
-#define TEST_TASK_PRIORITY				( tskIDLE_PRIORITY + 1UL )
+#define TEST_TASK_PRIORITY			( tskIDLE_PRIORITY + 1UL )
 
 #ifndef MQTTHOST
 #define MQTTHOST "piudev2.local.jondurrant.com"
@@ -36,6 +36,58 @@
 #define MQTTPASSWD "MAC"
 #endif
 
+void runTimeStats(   ){
+	//char pcWriteBuffer[120] = "";
+	TaskStatus_t *pxTaskStatusArray;
+	volatile UBaseType_t uxArraySize, x;
+	unsigned long ulTotalRunTime;
+
+   /* Make sure the write buffer does not contain a string. */
+   //*pcWriteBuffer = 0x00;
+
+   /* Take a snapshot of the number of tasks in case it changes while this
+   function is executing. */
+   uxArraySize = uxTaskGetNumberOfTasks();
+   printf("Number of tasks %d\n", uxArraySize);
+
+   /* Allocate a TaskStatus_t structure for each task.  An array could be
+   allocated statically at compile time. */
+   pxTaskStatusArray = (TaskStatus_t *)pvPortMalloc( uxArraySize * sizeof( TaskStatus_t ) );
+
+   if( pxTaskStatusArray != NULL ){
+      /* Generate raw status information about each task. */
+      uxArraySize = uxTaskGetSystemState( pxTaskStatusArray,
+                                 uxArraySize,
+                                 &ulTotalRunTime );
+
+
+
+	 /* For each populated position in the pxTaskStatusArray array,
+	 format the raw data as human readable ASCII data. */
+	 for( x = 0; x < uxArraySize; x++ )
+	 {
+
+
+		 printf("Task: %s \t%d \t cPri:%d \t bPri:%d \t hw:%d\n",
+				pxTaskStatusArray[ x ].pcTaskName,
+				pxTaskStatusArray[ x ].xTaskNumber,
+				pxTaskStatusArray[ x ].uxCurrentPriority ,
+				pxTaskStatusArray[ x ].uxBasePriority,
+				pxTaskStatusArray[ x ].usStackHighWaterMark
+				);
+
+
+
+	 }
+
+
+      /* The array is no longer needed, free the memory it consumes. */
+      vPortFree( pxTaskStatusArray );
+   } else {
+	   printf("Failed to allocate space for stats\n");
+   }
+}
+
 
 void main_task(void *params){
 
@@ -43,11 +95,19 @@ void main_task(void *params){
 	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
 
 
+	RGBLEDAgent serviceLED("Service LED", 2,3,4);
+	if (!serviceLED.start(TEST_TASK_PRIORITY)){
+		printf("Failed to start serviceLED Agent\n");
+	}
+	ConnectionObserver connObs(&serviceLED);
+	connObs.LinkDown();
+
 	int res = cyw43_arch_init();
 	printf("cyw42 init %d\n", res);
 	if (res) {
 	//if (cyw43_arch_init_with_country(CYW43_COUNTRY_UK)){
 		printf("failed to initialise\n");
+		connObs.LinkFailed();
 		return;
 	}
 
@@ -68,20 +128,22 @@ void main_task(void *params){
 		}
 	}
 
+	connObs.APJoined();
 	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
 
 
 
 
-	RGBLEDAgent rgbLED(2,3,4);
-	if (!rgbLED.start(TEST_TASK_PRIORITY+2)){
+
+	RGBLEDAgent rgbLED("Lamp LED", 6,7,8);
+	if (!rgbLED.start(TEST_TASK_PRIORITY)){
 		printf("Failed to start RGB LED Agent\n");
 	}
 	printf("RGB HW:%d\n", rgbLED.getStakHighWater());
+	printf("serviceLED HW:%d\n", serviceLED.getStakHighWater());
 
 	rgbLED.set(RGBModeOn, 0xFF, 0xFF, 0xFF);
-
-
+	serviceLED.set(RGBModeOn, 0xFF, 0x00, 0x00);
 
 	char ipStr[20];
 	WifiHelper::getIPAddressStr(ipStr);
@@ -94,7 +156,6 @@ void main_task(void *params){
 	char mqttPwd[] = MQTTPASSWD;
 	MQTTRouterTwin mqttRouter;
 	StateExample state;
-	ExampleAgentObserver agentObs;
 
 	MQTTAgent mqttAgent;
 	TwinTask xTwin;
@@ -122,7 +183,7 @@ void main_task(void *params){
 	mqttRouter.setPingTask(&xPing);
 
 	//Setup and start the mqttAgent
-	mqttAgent.setObserver(&agentObs);
+	mqttAgent.setObserver(&connObs);
 	mqttAgent.setRouter(&mqttRouter);
 	mqttAgent.mqttConnect(mqttTarget, mqttPort, true, false);
 	mqttAgent.start(tskIDLE_PRIORITY+1);
@@ -133,9 +194,17 @@ void main_task(void *params){
     while(true) {
     	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
     	printf("RGB HW:%d\n", rgbLED.getStakHighWater());
+    	printf("Service LED HW: %d\n", serviceLED.getStakHighWater());
+    	printf("MQTT Agent HW: %d\n",mqttAgent.getStakHighWater());
+    	printf("Ping Agent HW: %d\n",xPing.getStakHighWater());
+    	printf("Twin Agent HW: %d\n",xTwin.getStakHighWater());
+
+    	runTimeStats();
+
         vTaskDelay(1000);
 
         if (cyw43_wifi_link_status(&cyw43_state, CYW43_ITF_STA) < 0){
+        	connObs.LinkDown();
         	printf("AP Link is down\n");
         	while (r < 0){
 				r = cyw43_arch_wifi_connect_timeout_ms(WIFI_SSID, WIFI_PASSWORD, CYW43_AUTH_WPA2_AES_PSK, 60000);
@@ -146,6 +215,7 @@ void main_task(void *params){
 					 vTaskDelay(2000);
 				}
 			}
+        	connObs.APJoined();
         }
 
         i++;

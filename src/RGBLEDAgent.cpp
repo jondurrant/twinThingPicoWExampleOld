@@ -10,6 +10,7 @@
 #include "FreeRTOS.h"
 #include "RGBLEDAgent.h"
 #include <stdio.h>
+#include <cstring>
 
 /***
  * Destructor
@@ -27,8 +28,9 @@ RGBLEDAgent::~RGBLEDAgent() {
  * @param greenPin
  * @param bluePin
  */
-RGBLEDAgent::RGBLEDAgent(unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
+RGBLEDAgent::RGBLEDAgent(const char *name, unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
 	rgbPWM.setup(redPin, greenPin, bluePin);
+	strcpy(pName, name);
 }
 
 /***
@@ -68,7 +70,7 @@ bool RGBLEDAgent::start(UBaseType_t priority){
 		 * sk, storing the handle. */
 		xReturned = xTaskCreate(
 			RGBLEDAgent::vTask,       /* Function that implements the task. */
-			"RGB",   /* Text name for the task. */
+			pName,   /* Text name for the task. */
 			200,             /* Stack size in words, not bytes. */
 			( void * ) this,    /* Parameter passed into the task. */
 			priority,/* Priority at which the task is created. */
@@ -114,7 +116,7 @@ void RGBLEDAgent::run(){
     		}
     	}
     	rgbPWM.tick();
-		vTaskDelay(1);
+		vTaskDelay(10);
     }
 }
 

@@ -26,7 +26,7 @@ public:
 	 * @param greenPin
 	 * @param bluePin
 	 */
-	RGBLEDAgent(unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
+	RGBLEDAgent(const char * name, unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
 
 
 	/***
@@ -81,6 +81,8 @@ private:
 
 	//The task
 	TaskHandle_t xHandle = NULL;
+
+	char pName[20];
 
 
 };

@@ -12,6 +12,9 @@
 
 #include "pico/stdlib.h"
 
+/***
+ * Modes for the RGB LED
+ */
 enum RGBMode { RGBModeOff, RGBModeOn, RGBModeSlow, RGBModeFast, RGBModeOnce };
 
 class RGBpwm {
@@ -90,8 +93,14 @@ private:
 	unsigned int xTickCount = 0;
 	bool xState = false;
 
-
+	/***
+	 * Turn LED Off
+	 */
 	void off();
+
+	/***
+	 * Turn LED on to specifed colour
+	 */
 	void on();
 
 };

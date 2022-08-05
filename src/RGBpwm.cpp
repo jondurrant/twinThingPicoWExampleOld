@@ -15,14 +15,15 @@
 #include "task.h"
 
 
-#define SLOWTICK  800
-#define FASTTICK  200
-#define RGBTICK  2000
+#define SLOWTICK  800/10
+#define FASTTICK  200/10
+#define RGBTICK  2000/10
 
 
 
 /***
 * Destructor
+* */
 RGBpwm::~RGBpwm() {
 	// NOP
 }

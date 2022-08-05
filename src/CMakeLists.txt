@@ -2,7 +2,7 @@ add_executable(${NAME}
         main.cpp
         RGBLEDAgent.cpp
         RGBpwm.cpp
-        ExampleAgentObserver.cpp
+        ConnectionObserver.cpp
         StateExample.cpp
         )
 
