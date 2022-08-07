@@ -68,6 +68,6 @@ for n in range(10000):
     print("Publishing get %s"%p)
     infot = client.publish(get_topic, p,retain=False, qos=1)
     infot.wait_for_publish()
-    time.sleep(1)
+    time.sleep(0.25)
 
 time.sleep(30)

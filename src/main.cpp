@@ -67,10 +67,10 @@ void runTimeStats(   ){
 	 for( x = 0; x < uxArraySize; x++ )
 	 {
 		 printf("Task: %d \t cPri:%d \t bPri:%d \t hw:%d \t%s\n",
-				pxTaskStatusArray[ x ].xTaskNumber,
+				pxTaskStatusArray[ x ].xTaskNumber ,
 				pxTaskStatusArray[ x ].uxCurrentPriority ,
-				pxTaskStatusArray[ x ].uxBasePriority,
-				pxTaskStatusArray[ x ].usStackHighWaterMark.
+				pxTaskStatusArray[ x ].uxBasePriority ,
+				pxTaskStatusArray[ x ].usStackHighWaterMark ,
 				pxTaskStatusArray[ x ].pcTaskName
 				);
 	 }
