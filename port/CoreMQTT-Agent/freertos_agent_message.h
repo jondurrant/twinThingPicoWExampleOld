@@ -35,10 +35,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "queue.h"
 
+#include "core_mqtt_agent.h"
 /* Include MQTT agent messaging interface. */
 #include "core_mqtt_agent_message_interface.h"
 
@@ -49,6 +51,13 @@
 struct MQTTAgentMessageContext
 {
     QueueHandle_t queue;
+};
+
+struct MQTTAgentCommandContext
+{
+	MQTTPublishInfo_t publishInfo;
+	char * topic;
+	void * payload;
 };
 
 /*-----------------------------------------------------------*/

@@ -31,7 +31,7 @@
 
 #ifndef MQTTHOST
 #define MQTTHOST "piudev2.local.jondurrant.com"
-#define MQTTPORT 1883
+#define MQTTPORT 3881 //1883
 #define MQTTUSER "MAC"
 #define MQTTPASSWD "MAC"
 #endif
@@ -192,12 +192,6 @@ void main_task(void *params){
 
 	uint8_t i=0;
     while(true) {
-    	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
-    	printf("RGB HW:%d\n", rgbLED.getStakHighWater());
-    	printf("Service LED HW: %d\n", serviceLED.getStakHighWater());
-    	printf("MQTT Agent HW: %d\n",mqttAgent.getStakHighWater());
-    	printf("Ping Agent HW: %d\n",xPing.getStakHighWater());
-    	printf("Twin Agent HW: %d\n",xTwin.getStakHighWater());
 
     	runTimeStats();
 
