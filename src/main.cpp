@@ -21,9 +21,14 @@
 #include "MQTTRouterTwin.h"
 #include <WifiHelper.h>
 #include "StateExample.h"
+#include "StateObserverExample.h"
 #include "ConnectionObserver.h"
 
 #include "RGBLEDAgent.h"
+#include "BlinkAgent.h"
+
+#include "SwitchMgr.h"
+#include "RGBSwitchObs.h"
 
 
 
@@ -99,8 +104,13 @@ void main_task(void *params){
 	printf("Main task started\n");
 	printf("Main HW: %d\n", uxTaskGetStackHighWaterMark(xTaskGetCurrentTaskHandle()));
 
+	BlinkAgent blink("Blink", 3);
+	blink.start(TEST_TASK_PRIORITY);
 
-	RGBLEDAgent serviceLED("Service LED", 2,3,4);
+
+
+
+	RGBLEDAgent serviceLED("Service LED", 2,4,5);
 	if (!serviceLED.start(TEST_TASK_PRIORITY)){
 		printf("Failed to start serviceLED Agent\n");
 	}
@@ -140,7 +150,7 @@ void main_task(void *params){
 
 
 
-	RGBLEDAgent rgbLED("Lamp LED", 6,7,8);
+	RGBLEDAgent rgbLED("Lamp LED", 6,8,9);
 	if (!rgbLED.start(TEST_TASK_PRIORITY)){
 		printf("Failed to start RGB LED Agent\n");
 	}
@@ -161,6 +171,7 @@ void main_task(void *params){
 	char mqttPwd[] = MQTTPASSWD;
 	MQTTRouterTwin mqttRouter;
 	StateExample state;
+	StateObserverExample stateObs(&rgbLED ,&state);
 
 	MQTTAgent mqttAgent;
 	TwinTask xTwin;
@@ -178,6 +189,7 @@ void main_task(void *params){
 	xTwin.setStateObject(&state);
 	xTwin.setMQTTInterface(&mqttAgent);
 	xTwin.start(tskIDLE_PRIORITY+1);
+	state.attach(&stateObs);
 
 	//Start up a Ping agent to mange ping requests
 	xPing.setInterface(&mqttAgent);
@@ -194,6 +206,10 @@ void main_task(void *params){
 	mqttAgent.start(tskIDLE_PRIORITY+1);
 
 
+
+	SwitchMgr switchMgr(0);
+	RGBSwitchObs switchObs(&state);
+	switchMgr.setObserver(&switchObs);
 
 	uint8_t i=0;
     while(true) {
@@ -217,6 +233,7 @@ void main_task(void *params){
         	connObs.APJoined();
         }
 
+        /**
         i++;
         switch(i){
         	case 1: {
@@ -273,6 +290,7 @@ void main_task(void *params){
         		i=0;
         	}
         }
+        */
 
     }
 

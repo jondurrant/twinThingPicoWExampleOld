@@ -4,6 +4,15 @@ add_executable(${NAME}
         RGBpwm.cpp
         ConnectionObserver.cpp
         StateExample.cpp
+        StateObserverExample.cpp
+        BlinkAgent.cpp
+        
+        SwitchMgr.cpp
+        SwitchObserver.cpp
+        GPIOInputMgr.cpp
+        GPIOObserver.cpp
+        
+        RGBSwitchObs.cpp
         )
 
 # Pull in our pico_stdlib which pulls in commonly used features
