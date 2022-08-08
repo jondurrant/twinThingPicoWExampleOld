@@ -7,11 +7,19 @@
 
 #include "StateObserverExample.h"
 
+/***
+ * Constructor
+ * @param agent - RGB LED to manage
+ * @param state - State to take changes from
+ */
 StateObserverExample::StateObserverExample(RGBLEDAgent *agent, StateExample *state) {
 	pAgent = agent;
 	pState = state;
 }
 
+/***
+ * Destructor
+ */
 StateObserverExample::~StateObserverExample() {
 	// NOP
 }

@@ -14,6 +14,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
+#include "pico/stdlib.h"
 
 
 class RGBLEDAgent  {
@@ -26,7 +27,7 @@ public:
 	 * @param greenPin
 	 * @param bluePin
 	 */
-	RGBLEDAgent(const char * name, unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
+	RGBLEDAgent(const char * name, uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
 
 
 	/***
@@ -44,7 +45,7 @@ public:
 	 * @param b - Blue
 	 * @return
 	 */
-	BaseType_t set(RGBMode m, unsigned char r, unsigned char g, unsigned char b);
+	BaseType_t set(RGBMode m, uint8_t r, uint8_t g, uint8_t b);
 
 	/***
 	 *  create the vtask

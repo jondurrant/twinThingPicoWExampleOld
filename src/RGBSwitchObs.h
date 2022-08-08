@@ -1,6 +1,8 @@
 /*
  * RGBSwitchObs.h
  *
+ * Switch Observer that will cycle the IOT Device state through colour of a rainbow
+ *
  *  Created on: 8 Aug 2022
  *      Author: jondurrant
  */
@@ -13,7 +15,15 @@
 
 class RGBSwitchObs : public SwitchObserver {
 public:
+	/***
+	 * Constructor
+	 * @param state - State object to interface too
+	 */
 	RGBSwitchObs(StateExample *state);
+
+	/***
+	 * Destructor
+	 */
 	virtual ~RGBSwitchObs();
 
 	/***
@@ -30,10 +40,13 @@ public:
 
 private:
 
+	//State object
 	StateExample *pState = NULL;
 
+	//Sequence within the rainbox
 	uint8_t xSeq =0;
 
+	//Rainbow count
 	const uint8_t xRainbowCount = 7;
 
 	//Rainbow sequence as Red, Green, Blue tuples

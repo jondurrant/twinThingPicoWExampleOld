@@ -31,7 +31,7 @@ public:
 	 * @param greenPin - GPIO number
 	 * @param bluePin - GPIO number
 	 */
-	RGBpwm(unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
+	RGBpwm(uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
 
 	/***
 	 * Destructor
@@ -44,7 +44,7 @@ public:
 	 * @param greenPin
 	 * @param bluePin
 	 */
-	void setup(unsigned char redPin, unsigned char greenPin, unsigned char bluePin);
+	void setup(uint8_t redPin, uint8_t greenPin, uint8_t bluePin);
 
 	/***
 	 * Set RGB colour of the LED. Max brightness is 0xffff
@@ -66,7 +66,7 @@ public:
 	 * @param g
 	 * @param b
 	 */
-	void setRGBb(unsigned char r, unsigned char g, unsigned char b);
+	void setRGBb(uint8_t r, uint8_t g, uint8_t b);
 
 	/***
 	 * Set mode: On, Off, Flash, etc
@@ -80,9 +80,9 @@ public:
 	void tick();
 
 private:
-	unsigned char xRedPin;
-	unsigned char xGreenPin;
-	unsigned char xBluePin;
+	uint8_t xRedPin;
+	uint8_t xGreenPin;
+	uint8_t xBluePin;
 
 	uint16_t pRgb[3];
 	uint16_t pPrevRgb[3]

@@ -7,11 +7,17 @@
 
 #include "BlinkPicoWTask.h"
 
+/***
+ * Constructor
+ */
 BlinkPicoWTask::BlinkPicoWTask() {
-	// TODO Auto-generated constructor stub
+	// NOP
 
 }
 
+/***
+ * Destructor
+ */
 BlinkPicoWTask::~BlinkPicoWTask() {
 	stop();
 }
@@ -48,7 +54,10 @@ TaskHandle_t BlinkPicoWTask::getTask(){
 	return xHandle;
 }
 
-
+/***
+ *  create the task that will get picked up by scheduler
+ *
+ * */
 bool BlinkPicoWTask::start(UBaseType_t priority){
 	BaseType_t res;
 	res = xTaskCreate(
@@ -85,10 +94,8 @@ bool BlinkPicoWTask::start(UBaseType_t priority){
 	for( ;; )
 	{
 		cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 1);
-		//printf("On\n");
 		vTaskDelay(BLINK_TIME);
 		cyw43_arch_gpio_put(CYW43_WL_GPIO_LED_PIN, 0);
-		//printf("Off\n");
 		vTaskDelay(BLINK_TIME);
 	}
 

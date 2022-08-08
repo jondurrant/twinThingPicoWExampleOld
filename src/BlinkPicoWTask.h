@@ -20,13 +20,20 @@
 
 class BlinkPicoWTask {
 public:
+	/***
+	 * Constructor
+	 */
 	BlinkPicoWTask();
+
+	/***
+	 * Destructor
+	 */
 	virtual ~BlinkPicoWTask();
 
 	/***
-	 *  create the vtask, will get picked up by scheduler
-	 *
-	 *  */
+	 *  create the task that will get picked up by scheduler
+	 * @param priority - priority to run at
+	 * */
 	virtual  bool start(UBaseType_t priority = tskIDLE_PRIORITY);
 
 	/***
@@ -54,7 +61,15 @@ protected:
 	TaskHandle_t xHandle = NULL;
 
 private:
+	/***
+	 * Internal function to run up the task
+	 * @param pvParameters
+	 */
 	static void vTask( void * pvParameters );
+
+	/***
+	 * Run loop for the task
+	 */
 	void run();
 };
 

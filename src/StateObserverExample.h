@@ -1,6 +1,8 @@
 /*
  * StateObserverExample.h
  *
+ * Observer state and link it to the state of an RGB LED
+ *
  *  Created on: 8 Aug 2022
  *      Author: jondurrant
  */
@@ -14,7 +16,16 @@
 
 class StateObserverExample : public StateObserver {
 public:
+	/***
+	 * Constructor
+	 * @param agent - RGB LED to manage
+	 * @param state - State to take changes from
+	 */
 	StateObserverExample(RGBLEDAgent *agent, StateExample *state);
+
+	/***
+	 * Destructor
+	 */
 	virtual ~StateObserverExample();
 
 	/***
@@ -24,7 +35,10 @@ public:
 	virtual void notifyState(uint16_t dirtyCode);
 
 private:
+	//RGB LED Agent
 	RGBLEDAgent *pAgent = NULL;
+
+	//State object
 	StateExample *pState = NULL;
 };
 

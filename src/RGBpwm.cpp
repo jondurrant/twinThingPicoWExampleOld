@@ -41,7 +41,7 @@ RGBpwm::RGBpwm(){
  * @param greenPin - GPIO number
  * @param bluePin - GPIO number
  */
-RGBpwm::RGBpwm(unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
+RGBpwm::RGBpwm(uint8_t redPin, uint8_t greenPin, uint8_t bluePin){
 	setup(redPin, greenPin, bluePin);
 }
 
@@ -51,7 +51,7 @@ RGBpwm::RGBpwm(unsigned char redPin, unsigned char greenPin, unsigned char blueP
  * @param greenPin
  * @param bluePin
  */
-void RGBpwm::setup(unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
+void RGBpwm::setup(uint8_t redPin, uint8_t greenPin, uint8_t bluePin){
 	this->xRedPin = redPin;
 	this->xGreenPin = greenPin;
 	this->xBluePin = bluePin;
@@ -105,7 +105,7 @@ void RGBpwm::setRGB(uint16_t r, uint16_t g, uint16_t b){
  * @param g
  * @param b
  */
-void RGBpwm::setRGBb(unsigned char r, unsigned char g, unsigned char b){
+void RGBpwm::setRGBb(uint8_t r, uint8_t g, uint8_t b){
 	uint16_t red = r * r;
 	uint16_t green = g * g;
 	uint16_t blue = b * b;

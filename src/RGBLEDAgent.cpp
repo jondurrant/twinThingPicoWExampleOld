@@ -28,7 +28,7 @@ RGBLEDAgent::~RGBLEDAgent() {
  * @param greenPin
  * @param bluePin
  */
-RGBLEDAgent::RGBLEDAgent(const char *name, unsigned char redPin, unsigned char greenPin, unsigned char bluePin){
+RGBLEDAgent::RGBLEDAgent(const char *name, uint8_t redPin, uint8_t greenPin, uint8_t bluePin){
 	rgbPWM.setup(redPin, greenPin, bluePin);
 	strcpy(pName, name);
 }
@@ -42,8 +42,8 @@ RGBLEDAgent::RGBLEDAgent(const char *name, unsigned char redPin, unsigned char g
  * @param b - Blue
  * @return
  */
-BaseType_t RGBLEDAgent::set(RGBMode m, unsigned char r, unsigned char g, unsigned char b){
-	unsigned char cmd[4];
+BaseType_t RGBLEDAgent::set(RGBMode m, uint8_t r, uint8_t g, uint8_t b){
+	uint8_t cmd[4];
 	cmd[0] = m;
 	cmd[1]= r;
 	cmd[2] = g;
@@ -64,7 +64,7 @@ BaseType_t RGBLEDAgent::set(RGBMode m, unsigned char r, unsigned char g, unsigne
 bool RGBLEDAgent::start(UBaseType_t priority){
 	BaseType_t xReturned;
 	printf("Start\n");
-	xRGBQueue = xQueueCreate( 10, sizeof( unsigned char[4] ) );
+	xRGBQueue = xQueueCreate( 10, sizeof( uint8_t[4] ) );
 	if (xRGBQueue != NULL){
 		/* Create the ta
 		 * sk, storing the handle. */
@@ -100,7 +100,7 @@ void RGBLEDAgent::vTask( void * pvParameters )
  * Internal function to run the task from within the object
  */
 void RGBLEDAgent::run(){
-	unsigned char cmd[4];
+	uint8_t cmd[4];
 
 	printf("Run\n");
 

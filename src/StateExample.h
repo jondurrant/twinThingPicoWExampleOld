@@ -14,6 +14,7 @@
 
 #include "StateTemp.h"
 #include <stdbool.h>
+#include "pico/stdlib.h"
 
 /***
  * State include temperate, uptime, RGB colour and On status

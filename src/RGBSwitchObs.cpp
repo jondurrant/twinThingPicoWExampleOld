@@ -1,17 +1,26 @@
 /*
  * RGBSwitchObs.cpp
  *
+ * Switch Observer that will cycle the IOT Device state through colour of a rainbow
+ *
  *  Created on: 8 Aug 2022
  *      Author: jondurrant
  */
 
 #include "RGBSwitchObs.h"
 
+/***
+ * Constructor
+ * @param state - State object to interface too
+ */
 RGBSwitchObs::RGBSwitchObs(StateExample *state) {
 	pState = state;
 
 }
 
+/***
+ * Destructor
+ */
 RGBSwitchObs::~RGBSwitchObs() {
 	// NOP
 }

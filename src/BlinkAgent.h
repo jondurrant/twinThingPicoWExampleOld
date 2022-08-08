@@ -23,6 +23,10 @@ public:
 	 * @param delay - delay in microseconds
 	 */
 	BlinkAgent(const char *name, uint8_t gp, unsigned int delay = 500);
+
+	/***
+	 * Destructor
+	 */
 	virtual ~BlinkAgent();
 
 	/***
@@ -44,9 +48,15 @@ public:
 	virtual unsigned int getStakHighWater();
 
 protected:
-
+	 /***
+	  * Main Run Task for agent
+	  */
 	void run();
 
+	/***
+	 * Internal function used by FreeRTOS to run the task
+	 * @param pvParameters
+	 */
 	static void vTask( void * pvParameters );
 
 
@@ -54,10 +64,13 @@ private:
 	//The task
 	TaskHandle_t xHandle = NULL;
 
+	//GPIO Pad for the LED
 	uint8_t xGP = 0;
 
+	//Task name
 	char pName[20];
 
+	//Delay in microseconds
 	uint xDelay;
 };
 

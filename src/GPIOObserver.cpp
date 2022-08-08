@@ -8,11 +8,11 @@
 #include "GPIOObserver.h"
 
 GPIOObserver::GPIOObserver() {
-	// TODO Auto-generated constructor stub
+	// NOP
 
 }
 
 GPIOObserver::~GPIOObserver() {
-	// TODO Auto-generated destructor stub
+	// NOP
 }
 

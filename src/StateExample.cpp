@@ -62,18 +62,18 @@ bool StateExample::getOn() const{
 }
 
 /***
- * get RGB status as array of unsigned chars
- * @return unsigned char[3]
+ * get RGB status as array of uint8_ts
+ * @return uint8_t[3]
  */
-const unsigned char* StateExample::getRGB() const{
+const uint8_t* StateExample::getRGB() const{
 	return rgb;
 }
 
 /***
  * sets the RGB based on an array of RGN value
- * @param newRGB unsigned char [r, g, b]
+ * @param newRGB uint8_t [r, g, b]
  */
-void StateExample::setRGB(unsigned char* newRGB){
+void StateExample::setRGB(uint8_t* newRGB){
 	memcpy(rgb, newRGB, 3);
 	setDirty(RGBSLOT);
 }
@@ -84,7 +84,7 @@ void StateExample::setRGB(unsigned char* newRGB){
  * @param g
  * @param b
  */
-void StateExample::setRGB(unsigned char r, unsigned char g, unsigned char b){
+void StateExample::setRGB(uint8_t r, uint8_t g, uint8_t b){
 	rgb[0] = r;
 	rgb[1] = g;
 	rgb[2] = b;
@@ -112,7 +112,7 @@ char* StateExample::jsonOn(char *buf, unsigned int len){
 char* StateExample::jsonRGB(char *buf, unsigned int len){
 	char *p = buf;
     p = json_arrOpen( p, "rgb", &len);
-    for (unsigned char i=0; i < 3; i++){
+    for (uint8_t i=0; i < 3; i++){
     	p = json_uint( p, NULL, getRGB()[i], &len );
     }
     p = json_arrClose( p, &len);
@@ -127,7 +127,7 @@ void StateExample::updateFromJson(json_t const *json){
 	StateTemp::updateFromJson(json);
 
 	json_t const *jp;
-	unsigned char newRGB[3]={0, 0, 0};
+	uint8_t newRGB[3]={0, 0, 0};
 	bool rgbOK = true;
 
 	jp = json_getProperty(json, "on");
@@ -142,12 +142,12 @@ void StateExample::updateFromJson(json_t const *json){
 	if (jp){
 		if (JSON_ARRAY == json_getType(jp)){
 			jp = json_getChild(jp);
-			for (unsigned char i=0; i < 3; i++){
+			for (uint8_t i=0; i < 3; i++){
 				if (jp){
 					if (JSON_INTEGER == json_getType(jp)){
 						int col = json_getInteger(jp);
 						if ((col >= 0) && (col <= 0xFF)){
-							newRGB[i] = (unsigned char) col;
+							newRGB[i] = (uint8_t) col;
 						} else {
 							rgbOK = false;
 						}

@@ -12,6 +12,12 @@
 #include <cstring>
 
 
+/***
+* Constructor
+* €param name - task name
+* @param gp - GP Pad number for LED
+* @param delay - delay in microseconds
+*/
 BlinkAgent::BlinkAgent(const char *name, uint8_t gp,unsigned int delay) {
 	strcpy(pName, name);
 	xGP = gp;
@@ -20,10 +26,17 @@ BlinkAgent::BlinkAgent(const char *name, uint8_t gp,unsigned int delay) {
 	gpio_set_dir(xGP, GPIO_OUT);
 }
 
+/***
+ * Destructor
+ */
 BlinkAgent::~BlinkAgent() {
 	//NOP
 }
 
+/***
+ *  create the vtask, will get picked up by scheduler
+ *
+ **/
 bool BlinkAgent::start(UBaseType_t priority){
 	BaseType_t res;
 	res = xTaskCreate(
